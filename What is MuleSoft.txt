@@ -1,0 +1,2 @@
+Mule is the runtime engine of Anypoint Platform, is a lightweight Java-based enterprise service bus(ESB) and integration platform that allows developers to connect applications together quickly, easily and enabling them to exchange data.
+Also, it enables easy integration of existing systems, regardless of the different technologies that the applications use, including JMS, web service, JDBC, HTTP and more
