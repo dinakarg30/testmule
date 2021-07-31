@@ -1,0 +1,4 @@
+-System APIs are built to connect through underlying systems (any system which contains the raw data).
+-Basically system API contains sensitive information as it contains raw data.
+-should never be exposed for public use.
+Eg: APIs which connect ot databases, salesforce, SAP systems, Hadoop systems etc..
