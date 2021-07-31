@@ -1,0 +1,10 @@
+Com N Type	       Databased       Comments
+I020 RTI Rest service TomIntegration    Supplier
+I021 RTI Rest service TomIntegration    Prodcut Info
+I022 RTI Rest service TomIntegration    Store Info
+I023 BizTalk TomIntegration,CIPDS/TSE,DDS  BX file creation and publish to stores
+
+training.mulesoft.com/certification/developer-mule4-level1
+
+data governance - big data(part of big data)
+eenterprise data architechture, business data analyst
