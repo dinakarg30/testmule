@@ -1,0 +1,2 @@
+-A web service is a way for two machines to communicate with each other over a network.
+-A web server running on a computer listens for requests from other computers. When a request from another computer is received, over a network, the web service returns the requested resources.
