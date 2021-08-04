@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>f370e047-a348-4529-b72b-23cf4d9cb8b7</groupId>
+  <artifactId>product-api</artifactId>
+  <version>1.0.1</version>
+  <name>product-api</name>
+  <properties>
+    <classifier>raml</classifier>
+    <main>product-api.raml</main>
+    <originalFormatVersion>1.0</originalFormatVersion>
+    <apiVersion>v1</apiVersion>
+    <projectId>3b2ebe0b-ec9a-421c-82e8-44bb358b545c</projectId>
+    <branchId>master</branchId>
+    <commitId>ce29752d2c65a86f45eb0df983ea6da2dc3d9992</commitId>
+    <type>rest-api</type>
+    <mainFile>product-api.raml</mainFile>
+  </properties>
+  <repositories>
+    <repository>
+      <id>anypoint-exchange</id>
+      <url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
+    </repository>
+  </repositories>
+</project>
