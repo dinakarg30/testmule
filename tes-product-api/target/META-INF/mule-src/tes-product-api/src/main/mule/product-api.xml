@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+    <http:listener-config name="product-api-httpListenerConfig">
+        <http:listener-connection host="${http.host}" port="${http.port}" />
+    </http:listener-config>
+    <apikit:config name="product-api-config" api="resource::f370e047-a348-4529-b72b-23cf4d9cb8b7:product-api:1.0.1:raml:zip:product-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<configuration-properties doc:name="Configuration properties" doc:id="c25245e2-8138-487b-a3c1-0b23d7ad4555" file="Properties\product-${env}-config.yaml" />
+	<global-property doc:name="Global Property" doc:id="237dd4a0-5b51-4ce7-9bd4-4a5525591e0e" name="env" value="ppe" />
+	<global-property doc:name="Global Property" doc:id="ddaf327c-1052-4127-a47d-8fcf2122d1a6" name="Blowfish.key" value="dbp" />
+	<api-gateway:autodiscovery apiId="17121367" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="4a88cb74-1478-427a-8746-a9f40436294e" flowRef="product-api-main"/>
+	<flow name="product-api-main">
+        <http:listener config-ref="product-api-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="product-api-config" />
+    </flow>
+    <flow name="product-api-console">
+        <http:listener config-ref="product-api-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="product-api-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\product:product-api-config">
+		<ee:transform doc:name="Transform Message" doc:id="9e9b377c-3f34-46ff-8f1f-0a0132ddfe38" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var excelData = {
+  "RMS-IL-01": [
+    {
+      "userName": "RMS",
+      "userId": "RMS12",
+      "propogateType": "EANLONGCODE",
+      "result": true,
+      "string1": "E0012",
+      "string2": "E214",
+      "string3": "E3179"
+    }
+  ],
+  "RMS-IL-02": [
+    {
+      "userName": "ODS",
+      "userId": "ODS31",
+      "propogateType": "PROLONGCODE",
+      "result": false,
+      "string1": "P0012",
+      "string2": "P214",
+      "string3": "P3179"
+    }
+  ],
+  "RMS-IL-03": [
+    {
+      "userName": "IL",
+      "userId": "IL42",
+      "propogateType": "ILLONGCODE",
+      "result": false,
+      "string1": "I0012",
+      "string2": "I214",
+      "string3": "I3179"
+    }
+  ],
+  "RMS-IL-04": [
+    {
+      "userName": "RMIL",
+      "userId": "RL42",
+      "propogateType": "RLLONGCODE",
+      "result": true,
+      "string1": "L0012",
+      "string2": "L214",
+      "string3": "L3179"
+    }
+  ]
+}
+---
+excelData mapObject(value, key) -> {
+    (key) : value map {
+  userName: $.userName default "",
+  userId: $.userId default "",
+  propogateType: $.propogateType default "",
+  result: $.result default "",
+  response: {
+    string1: $.string1 default "",
+    string2: $.string2 default "",
+    string3: $.string3 default ""
+  }
+ }      
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="jbkb" ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-variable>
+				<ee:set-variable variableName="fvh" ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+    </flow>
+	<flow name="get:\product\(productId):product-api-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+            <ee:variables>
+                <ee:set-variable variableName="productId"><![CDATA["RMS-IL-" ++ attributes.uriParams.'productId' default""]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var excelData = {
+  "RMS-IL-01": [
+    {
+      "userName": "RMS",
+      "userId": "RMS12",
+      "propogateType": "EANLONGCODE",
+      "result": true,
+      "string1": "E0012",
+      "string2": "E214",
+      "string3": "E3179"
+    }
+  ],
+  "RMS-IL-02": [
+    {
+      "userName": "ODS",
+      "userId": "ODS31",
+      "propogateType": "PROLONGCODE",
+      "result": false,
+      "string1": "P0012",
+      "string2": "P214",
+      "string3": "P3179"
+    }
+  ],
+  "RMS-IL-03": [
+    {
+      "userName": "IL",
+      "userId": "IL42",
+      "propogateType": "ILLONGCODE",
+      "result": false,
+      "string1": "I0012",
+      "string2": "I214",
+      "string3": "I3179"
+    }
+  ],
+  "RMS-IL-04": [
+    {
+      "userName": "RMIL",
+      "userId": "RL42",
+      "propogateType": "RLLONGCODE",
+      "result": true,
+      "string1": "L0012",
+      "string2": "L214",
+      "string3": "L3179"
+    }
+  ]
+}
+var Id = vars.productId
+---
+(Id) : if(keysOf(excelData)[0] ~= Id) excelData."RMS-IL-01" map {
+  userName: $.userName default "",
+  userId: $.userId default "",
+  propogateType: $.propogateType default "",
+  result: $.result default "",
+  response: {
+    string1: $.string1 default "",
+    string2: $.string2 default "",
+    string3: $.string3 default ""
+  } }else if(keysOf(excelData)[1] ~= Id) excelData."RMS-IL-02"  map {
+  userName: $.userName default "",
+  userId: $.userId default "",
+  propogateType: $.propogateType default "",
+  result: $.result default "",
+  response: {
+    string1: $.string1 default "",
+    string2: $.string2 default "",
+    string3: $.string3 default ""
+  } }  else if(keysOf(excelData)[2] ~= Id) excelData."RMS-IL-03"  map {
+  userName: $.userName default "",
+  userId: $.userId default "",
+  propogateType: $.propogateType default "",
+  result: $.result default "",
+  response: {
+    string1: $.string1 default "",
+    string2: $.string2 default "",
+    string3: $.string3 default ""
+  } } else if(keysOf(excelData)[3] ~= Id) excelData."RMS-IL-04"  map {
+  userName: $.userName default "",
+  userId: $.userId default "",
+  propogateType: $.propogateType default "",
+  result: $.result default "",
+  response: {
+    string1: $.string1 default "",
+    string2: $.string2 default "",
+    string3: $.string3 default ""
+  } } else "product Id invalid"]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="post:\product\data:application\json:product-api-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  status: "data inserted successfully(but not really)"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>

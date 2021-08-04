@@ -1,0 +1,29 @@
+{
+  "configs": [
+    "product-api.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "com.mycompany:tes-product-api:1.0.0-SNAPSHOT",
+  "minMuleVersion": "4.3.0",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedPackages": [],
+      "exportedResources": [
+        "log4j2.xml",
+        "product-api.xml",
+        "Properties/product-dev-config.yaml",
+        "Properties/product-ppe-config.yaml",
+        "Properties/product-prod-config.yaml",
+        "Properties/secure-qa.yaml",
+        "temp.properties"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}
